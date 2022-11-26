@@ -1,87 +1,47 @@
 # OpenConnect-VPN-Server
-**2022 OCT UPDATE**: We dockerized and added Dockerfile to run it anywhere you want on any linux distro easily.
-Buggy script for configuring OpenConnect (ocserv) protocol on the server easily and automatically.
-## Script Installation
-Tested on ubuntu 18.04 and 16.04.
 
-Download and saving script on your server:
-```bash
-curl -O https://raw.githubusercontent.com/iw4p/OpenConnect-Cisco-AnyConnect-VPN-Server-OneKey-ocserv/master/ocserv-install.sh
-```
+1) Install Docker:
+apt update
 
-Making script executable
-```bash
-chmod +x ocserv-install.sh
-```
+apt install apt-transport-https ca-certificates curl software-properties-common
 
-And then just run it:
-```sh
-./ocserv-install.sh
-``` 
-or
-```sh
-sudo bash ocserv-install.sh
-``` 
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
 
-## Docker Installation
-1. Install Docker
-2. Build docker image
-```bash
-docker build -t ocserv https://github.com/iw4p/OpenConnect-Cisco-AnyConnect-VPN-Server-OneKey-ocserv.git
-```
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 
-3. Run docker container
-```bash
-docker run --name ocserv --privileged -p 443:443 -p 443:443/udp -d ocserv
-```
+sudo apt update
 
-4. Add user
-```bash
+apt-cache policy docker-ce
+
+sudo apt install docker-ce
+
+sudo systemctl status docker
+
+
+-----------------------
+Install openconnect container:
+
+2-Build docker image:
+docker build -t ocserv https://github.com/miladfuel/openconnect-docker-ubuntu.git
+
+3-Run docker container:
+docker run --name ocserv --privileged -p 8080:443 -p 8080:443/udp -d ocserv
+
+--------------
+4-Add user:
 docker exec -ti ocserv ocpasswd -c /etc/ocserv/ocpasswd testUserName
-```
 
-5. Change user password
-```bash
-docker exec -ti ocserv ocpasswd -c /etc/ocserv/ocpasswd testUserName
-```
+5-Change user password:
+docker exec -ti ocserv ocpasswd -c /etc/ocserv/ocpasswd testPassword
 
-6. Delete user
-```bash
+6-Delete user:
 docker exec -ti ocserv ocpasswd -c /etc/ocserv/ocpasswd -d testUserName
-```
 
-7. Lock user
-```bash
+7-Lock user:
 docker exec -ti ocserv ocpasswd -c /etc/ocserv/ocpasswd -l testUserName
-```
 
-8. Unlock user
-```bash
+8-Unlock user:
 docker exec -ti ocserv ocpasswd -c /etc/ocserv/ocpasswd -u testUserName
-```
 
-9. Show all users and their hashed password
-```bash
+9-Show all users and their hashed password:
 docker exec -ti ocserv cat /etc/ocserv/ocpasswd
-```
-
-## Features
-- Easy install
-- Easy uninstall
-- Add User
-- Change Password
-- Show All Users
-- Delete User
-- Lock User
-- Unlock User
-
-## How to connect to it?
-For making connection to your server, you can use `AnyConnect`, `OpenConnect` or other alternative clients.
-
-- AnyConnect: [GUI AnyConnect client for available platforms](https://it.umn.edu/vpn-downloads-guides).
-- OpenConnect: [OpenConnect client for Linux](https://computingforgeeks.com/how-to-connect-to-vpn-server-with-openconnect-ssl-vpn-client-on-linux/).
-
-And one more thing, contributions are welcome.
-
-## More
-The script is based on [here](https://ocserv.gitlab.io/www/recipes-ocserv-configuration-basic.html)
